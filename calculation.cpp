@@ -38,7 +38,7 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
   fprintf(fp,"Subpage is %d \nThis is Eeprom.\n",subp);
    for (j = 0; j<832;j++)
    {
-           
+
        //fputc(EepromData[i],fp);
        if (EepromData[j] < 0x10)
        {
@@ -63,12 +63,12 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
 	   //fputc(RamData[i],fp);
 	   fprintf(fp,"%d ",RamData[j]);
    }*/
-  
-    
+
+
   j = 0;
  // int i = 0;
  //   printf("\n==============HERE==============\n");
-  
+
   //printf("\n==============HERE==============\n");
   float RamProper[12][16];
   uint8_t res = restore_resolution_control(EepromData);
@@ -91,10 +91,10 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
   float emissivity;
   float TGC;
   float Vir;
-  
+
   int row = 0;
   int col = 0;
-  
+
   uint8_t pixelrow;
   float a;
   float a_cp;
@@ -111,14 +111,14 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
   int i = 0;
   int col_true = 15;
   //printf("\n==============HERE1 %d==============\n",EepromData[51]);
-  
+
   for (row = 0; row<12;row++)
   {
 	  col_true = 15;
 	  for (col = 0; col<16;col++)
-	  { 
-			//printf("\n==============HERE2==============\n"); 
-	
+	  {
+			//printf("\n==============HERE2==============\n");
+
 		 //printf("\n==============HERE3  %f ==============\n", Vdd);
 			Vdd = restore_VDD(res,RamData,EepromData);
 			//Vdd = restore_VDD(res,RamData,EepromData);
@@ -126,45 +126,45 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
 			if (RamData[394]>32767)
 			{
 				Kgain = restore_gain(EepromData)/(RamData[394] - 65536);
-			} 
-			else 
+			}
+			else
 			{
 				Kgain = restore_gain(EepromData)/(RamData[394]);
-			}  
+			}
 			pixg = RamProper[row][col]*Kgain;
-    
+
 			if (RamData[392] > 32767)
-			{		
+			{
 				cppixg = (RamData[392] - 65536)*Kgain;
 			}
 			else
 			{
 				cppixg = RamData[392]*Kgain;
 			}
-	
+
 			Kta = restore_Kta(EepromData, i);
 			Kta_CP = restore_Kta_CP(EepromData);
 			Kv = restore_Kv(EepromData, i);
 			Kv_CP = restore_Kv_CP(EepromData);
-    
+
 			offset = restore_offset(subp,EepromData, i);
 			offset_CP = restore_offset_CP(EepromData);
 			pixosp = pixg - offset * (1 + Kta * (Ta - 25)) * (1 + Kv * (Vdd - 3.3));
-			//printf("\n==============HERE4==============\n"); 
+			//printf("\n==============HERE4==============\n");
 			cppixos = cppixg - offset_CP * (1 + Kta_CP * (Ta - 25))* (1 + Kv_CP * (Vdd -3.3));
-			//printf("\n==============HERE5==============\n"); 
+			//printf("\n==============HERE5==============\n");
 			emissivity = restore_emissivity(EepromData);
 			TGC = restore_TGC(EepromData);
 			Vir = pixosp/emissivity - TGC*cppixos;
-  
-    
-    
+
+
+
 			pixelrow = ((16*(row+1-1)+col_true+1)-1)/32 + 1;
 			a = restore_sensitivity(pixelrow,EepromData, i );
 			a_cp = restore_sensitivityacp(EepromData);
 			KsTa = restore_KsTa(EepromData);
 			acomp = (a - TGC*a_cp)*(1+KsTa*(Ta - 25));
-    
+
 			Tak4 = pow((Ta + 273.15),4);
 			Trk4 = pow((Ta - 5 +273.15),4);
 			Ta_r4 = Trk4 - (Trk4 - Tak4)/emissivity;
@@ -201,15 +201,15 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
 				printf("\n");
 			}*/
 			//if (i == 120) printf("\n==============HERE Kv and Kv_CP, %f and %f==============\n", Kv, Kv_CP);
-			
+
 			fprintf (fp,"%.0f ",RamProper[row][col]);     //file debug
-			
-			RamProper[row][col] = To; 
-    
+
+			RamProper[row][col] = To;
+
 			i++;
 			//printf("col_true %d, i, %d, row %d, col %d, pixelrow %d \n", col_true, i, row, col, pixelrow);
-			col_true --;       
-		
+			col_true --;
+
 			//if(i ==5) break;
 		}
 		//if(i ==5) break;
@@ -255,12 +255,12 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
 }
 
 
-void restore_Eeprom(uint16_t EEprom[])                                  // sets the four MSBs in a code to 0 
+void restore_Eeprom(uint16_t EEprom[])                                  // sets the four MSBs in a code to 0
 {
   int i = 0;
   for (i;i<832;i++)
   {
-  
+
      EEprom[i] = EEprom[i]&0x07FF;
   }
 }
@@ -270,16 +270,16 @@ void printarray(uint16_t Ram[])
 	int j = 0;
 	for (i;i<384;i++)
 	{
-		
+
 	    for (j = 0; j<16; j++)
 	    {
-			
+
 			if(Ram[i+j]>32767)
 			{
 				printf("%d ", Ram[i+j] - 65536);
 			}
 			//printf("%d ", i+j);
-		}		
+		}
 		i+= j-1;
 		printf("\n");
 	}
@@ -314,7 +314,7 @@ void newarray(uint16_t Ram[],float RamProper[][16], int subp)
 	    {
 			RamProper[row][col] = Ram[i] - 65536;
 	    }
-	    else 
+	    else
 	    {
 			RamProper[row][col] = Ram[i];
 		}
@@ -343,7 +343,7 @@ float restore_VDD(uint8_t Res, uint16_t Ram[], uint16_t EEprom[])
 {
   float Vdd = 0;
   int ram = Ram[426];
-  
+
   Kvdd = (EEprom[39]&0x07FF);
   Vdd25 = EEprom[38]&0x7FF;
 
@@ -364,7 +364,9 @@ float restore_VDD(uint8_t Res, uint16_t Ram[], uint16_t EEprom[])
   }
   Vdd25 = Vdd25*pow(2,5);
   Vdd = ((Res*ram - Vdd25)/Kvdd)+3.3;
-  
+
+  // printf("This is Vdd25 %d, and this is Kvdd %d", Vdd25, Kvdd);
+
   return Vdd;
 }
 
@@ -375,13 +377,13 @@ float restore_Ta(uint16_t Ram[], uint16_t EEprom[])
   {
     ram = ram - 65536;
   }*/
-   //printf("\n=====!!!======HERE Vdd25 and Kvdd, %d and %d==============\n", Vdd25, Kvdd);
+   printf("\n=====!!!======HERE Vdd25 and Kvdd, %d and %d==============\n", Vdd25, Kvdd);
   int16_t Kvptat_temp = EEprom[43]&0x07FF;
   float Kvptat;
   int16_t Ktptat_temp = EEprom[42]&0x07FF;
   float Ktptat;
   int16_t dV_temp = Ram[426];
-  float dV; 
+  float dV;
   uint16_t Vptat25 = 32*(EEprom[40]&0x07FF)+(EEprom[41]&0x07FF);
   int Vptat = Ram[416];
   int Vee = Ram[384];
@@ -413,13 +415,13 @@ float restore_Ta(uint16_t Ram[], uint16_t EEprom[])
   if (dV_temp > 32767)
   {
 	  dV_temp = dV_temp - 65536;
-  } 
+  }
   dV = (dV_temp - Vdd25)/Kvdd;
 
   Vptatart = (Vptat/(Vptat*Alphaptat + Vee))*pow(2,18);
 
   Ta = (Vptatart/(1+Kvptat*dV)-Vptat25)/Ktptat + 25;
-  //printf("\n=====!!!======HERE Ta is %f and Vptatart is %f and Vee is %d and Vptat is %d and dV is %f and Kvptat is %f and Ktptat is %f and Vptat25 is %d and Alphaptat is %f==============\n", Ta, Vptatart, Vee, Vptat,dV,Kvptat,Ktptat,Vptat25,Alphaptat);
+  printf("\n=====!!!======HERE Ta is %f and Vptatart is %f and Vee is %d and Vptat is %d and dV is %f and Kvptat is %f and Ktptat is %f and Vptat25 is %d and Alphaptat is %f==============\n", Ta, Vptatart, Vee, Vptat,dV,Kvptat,Ktptat,Vptat25,Alphaptat);
   return Ta;
 }
 
@@ -450,7 +452,7 @@ float restore_offset(int subp, uint16_t EEprom[], int iteration)
   }
 
   pix = offsetavarage + offsetsp * pow(2,offsetscale);
-  //printf("\n=====!!!!======-HERE,  pix %f and offsetscale is %.9f and offsetavarage is %d and %d===========\n", pix, offsetscale, offsetavarage, offsetsp);
+  printf("\n=====!!!!======-HERE (restore_offset),  pix %f and offsetscale is %.9f and offsetavarage is %d and %d===========\n", pix, offsetscale, offsetavarage, offsetsp);
   return pix;
 }
 
@@ -461,7 +463,7 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
   //int a2;
   float ascale;
   uint16_t apix = EEprom[256+iteration]&0x07FF;
-  
+
   if (p == 1)
   {
     aref = EEprom[28];
@@ -492,11 +494,11 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
     aref = EEprom[33];
     ascale = (EEprom[27]&0x001F) + 20;
   }
-  
-  a = (aref&0x07FF)/pow(2,ascale);   
+
+  a = (aref&0x07FF)/pow(2,ascale);
   a = apix*a/(pow(2,11)-1);
   //a2 = apix*aref/(pow(2,11)-1);
-  //printf("\n=====!!!!======-HERE,  a %.9f and p is %d and apix is %d and ascale is %f and aref is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
+  printf("\n=====!!!!======-HERE (restore_sensitivity),  a %.9f and p is %d and apix is %d and ascale is %f and aref is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
   return a;
 }
 
@@ -507,7 +509,7 @@ float restore_Kta(uint16_t EEprom[], int iteration)
   int16_t Ktaaverage = EEprom[21]&0x07FF;
   float Ktascale1 = (EEprom[22]&0x07E0)/pow(2,5);
   uint16_t Ktascale2 = EEprom[22]&0x001F;
-  
+
   if (Ktaee>31)
   {
     Ktaee = Ktaee - 64;
@@ -516,9 +518,9 @@ float restore_Kta(uint16_t EEprom[], int iteration)
   {
     Ktaaverage = Ktaaverage - 2048;
   }
-  
+
   Kta = (Ktaee * pow(2,Ktascale2) + Ktaaverage)/pow(2,Ktascale1);
-  //printf("\n=====!!!!======-HERE,  Ktaee %f and Ktaaverage is %d and %d[%d] and Kta %f==============\n", Ktaee, Ktaaverage, EEprom[448+iteration], 448+iteration,Kta);
+  printf("\n=====!!!!======-HERE,  Ktaee %f and Ktaaverage is %d and %d[%d] and Kta %f==============\n", Ktaee, Ktaaverage, EEprom[448+iteration], 448+iteration,Kta);
   //if (iteration %32 == 0) printf ("\n");
   //printf ("%d ", EEprom[448+iteration]);
   //printf ("%.6f ",Kta);
@@ -532,7 +534,7 @@ float restore_Kv(uint16_t EEprom[], int iteration)
   int16_t Kvaverage = EEprom[23]&0x07FF;
   float Kvscale1 = (EEprom[24]&0x07E0)/pow(2,5);
   uint16_t Kvscale2 = EEprom[24]&0x001F;
-  
+
   if (Kvee>15)
   {
     Kvee = Kvee - 32;
@@ -541,32 +543,33 @@ float restore_Kv(uint16_t EEprom[], int iteration)
   {
     Kvaverage = Kvaverage - 2048;
   }
-  
+
   Kv = (Kvee * pow(2,Kvscale2) + Kvaverage)/pow(2,Kvscale1);
-  //printf("\n=====!!!!======-HERE,  Kvee %d and Kvaverage is %d and %d[%d] and Kvscale1 %f, Kvscale2 %d, Kv is %f==============\n", Kvee, Kvaverage, EEprom[448+iteration], 448+iteration,Kvscale1,Kvscale2, Kv);
+  printf("\n=====!!!!======-HERE,  Kvee %d and Kvaverage is %d and %d[%d] and Kvscale1 %f, Kvscale2 %d, Kv is %f==============\n", Kvee, Kvaverage, EEprom[448+iteration], 448+iteration,Kvscale1,Kvscale2, Kv);
   //if (iteration %32 == 0) printf ("\n");
   //printf ("%d ", EEprom[448+iteration]);
   //printf ("%.5f ",Kv);
-  
+
   return Kv;
 }
 
 float restore_gain(uint16_t EEprom[])
 {
   float Gain = 32 * (EEprom[36]&0x07FF) + (EEprom[37]&0x07FF);
-  
+
+  printf("\n=======Here Gain is %f", Gain);
   return Gain;
 }
 
 float restore_KsTa(uint16_t EEprom[])
 {
   int16_t KsTa = EEprom[34]&0x07FF;
- 
+
   if(KsTa>1023)
   {
     KsTa = KsTa - 2048;
   }
-  //printf ("\nKSTA : %f\n",KsTa/pow(2,15));
+  printf ("\nKSTA : %f\n",KsTa/pow(2,15));
   return (KsTa/pow(2,15));
 }
 
@@ -590,16 +593,16 @@ float restore_emissivity(uint16_t EEprom[])
   if(emissivity>1023)
   {
     emissivity = emissivity - 2048;
-  }  
+  }
   return  emissivity/pow(2,9);
 }
 
 double restore_sensitivityacp(uint16_t EEprom[])
 {
   uint16_t ascale_CP = EEprom[46]&0x07FF;
-  
+
   double acp = (EEprom[45]&0x07FF)/pow(2,ascale_CP);
-  //printf("\n===================%d======================%d======================\n",ascale_CP,EEprom[45]&0x07FF);
+  printf("\n=======HERE(restore_sensitivity), ascale_CP============%d===========and acp===========%d======================\n",ascale_CP, acp/*EEprom[45]&0x07FF*/);
   return acp ;
 }
 
@@ -610,6 +613,8 @@ float restore_offset_CP (uint16_t EEprom[]) // CP - compensation pixel
   {
     off_CP = off_CP - 65536;
   }
+
+  printf("\nHere, offset_CP is %f", off_CP)
   return off_CP;
 }
 
@@ -622,7 +627,7 @@ float restore_Kv_CP (uint16_t EEprom[])
   {
     KVcp_EE = KVcp_EE - 64;
   }
-  return KVcp_EE/pow(2,KVscale); 
+  return KVcp_EE/pow(2,KVscale);
 }
 
 float restore_Kta_CP (uint16_t EEprom[])
