@@ -449,6 +449,9 @@ float restore_offset(int subp, uint16_t EEprom[], int iteration)
 
 double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
 {
+  FILE *fp;
+  fp = fopen ("/home/pi/programming/QT/Diploma/sensitivity.txt","a");
+  fp = fopen
   int aref;
   double a;
   //int a2;
@@ -489,7 +492,8 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
   a = (aref&0x07FF)/pow(2,ascale);
   a = apix*a/(pow(2,11)-1);
   //a2 = apix*aref/(pow(2,11)-1);
-  printf("\n=====!!!!======-HERE,  a (sensitivity) is %.9f and p (row) is %d and apix is %d and ascale (scale_row) is %f and aref (row_max) is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
+  fprintf(fp, "\n=====!!!!======-HERE,  a (sensitivity) is %.9f and p (row) is %d and apix is %d and ascale (scale_row) is %f and aref (row_max) is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
+  fclose(fp);
   return a;
 }
 
