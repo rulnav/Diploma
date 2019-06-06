@@ -451,7 +451,6 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
 {
   FILE *fp;
   fp = fopen ("/home/pi/programming/QT/Diploma/sensitivity.txt","a");
-  fp = fopen
   int aref;
   double a;
   //int a2;
