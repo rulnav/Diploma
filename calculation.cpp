@@ -179,8 +179,8 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
                 printf("\n==============HERE emissivity and TGC, %f and %f==============\n", emissivity,TGC);
                 printf("\n==============HERE KsTa and To, %f and %f==============\n", KsTa,To);
                 printf("\n==============HERE a and a_CP, %.12f and %.12f==============\n", a, a_cp);
-*/                printf("\n==============HERE restore_offset and Sx, %f and %f==============\n", offset, Sx);
-  /*              printf("\n==============HERE acomp and KsTo, %.12f and %f==============\n", acomp, KsTo);
+                printf("\n==============HERE restore_offset and Sx, %f and %f==============\n", offset, Sx);
+                printf("\n==============HERE acomp and KsTo, %.12f and %f==============\n", acomp, KsTo);
                 printf("\n==============HERE Vdd and Kgain, %f and %f==============\n", Vdd, Kgain);
                 printf("\n==============HERE emissivity and TGC, %f and %f==============\n", emissivity, TGC);
                 printf("\n==============HERE Kv and Kv_CP, %f and %f==============\n", Kv, Kv_CP);
@@ -443,7 +443,7 @@ float restore_offset(int subp, uint16_t EEprom[], int iteration)
   }
 
   pix = offsetavarage + offsetsp * pow(2,offsetscale);
-  printf("\n=====!!!!======-HERE,  pix %f and offsetscale is %.9f and offsetavarage is %d and %d===========\n", pix, offsetscale, offsetavarage, offsetsp);
+  printf("\n=====!!!!======-HERE,  pix %f and offsetscale is %.9f and offsetavarage (Pix_os_r1) is %d and %d===========\n", pix, offsetscale, offsetavarage, offsetsp);
   return pix;
 }
 
@@ -489,7 +489,7 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
   a = (aref&0x07FF)/pow(2,ascale);
   a = apix*a/(pow(2,11)-1);
   //a2 = apix*aref/(pow(2,11)-1);
-  printf("\n=====!!!!======-HERE,  a %.9f and p is %d and apix is %d and ascale is %f and aref is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
+  printf("\n=====!!!!======-HERE,  a (sensitivity) is %.9f and p (row) is %d and apix is %d and ascale (scale_row) is %f and aref (row_max) is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
   return a;
 }
 
@@ -547,6 +547,8 @@ float restore_Kv(uint16_t EEprom[], int iteration)
 float restore_gain(uint16_t EEprom[])
 {
   float Gain = 32 * (EEprom[36]&0x07FF) + (EEprom[37]&0x07FF);
+
+  printf("=========Gain (GainMeasRef) is: %f", Gain);
 
   return Gain;
 }
