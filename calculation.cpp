@@ -142,11 +142,11 @@ int instance (int subp, uint16_t EepromData[], uint16_t RamData[], uint16_t reso
             offset_CP = restore_offset_CP(EepromData);
             pixosp = pixg - offset * (1 + Kta * (Ta - 25)) * (1 + Kv * (Vdd - 3.3));
             //printf("\n==============HERE4==============\n");
-            cppixos = cppixg - offset_CP * (1 + Kta_CP * (Ta - 25))* (1 + Kv_CP * (Vdd -3.3));
+            cppixos = cppixg - offset_CP * (1 + Kta_CP * (Ta - 25))* (1 + Kv_CP * (Vdd -3.3)); //check if Ta0 is 25, and VddV0 is 3.3 (TODO)
             //printf("\n==============HERE5==============\n");
             emissivity = restore_emissivity(EepromData);
             TGC = restore_TGC(EepromData);
-            Vir = pixosp/emissivity - TGC*cppixos;
+            Vir = round((pixosp - TGC*cppixos)/emissivity); //must divide by e (?) TODO, also must be integer
 
 
 
@@ -443,14 +443,14 @@ float restore_offset(int subp, uint16_t EEprom[], int iteration)
   }
 
   pix = offsetavarage + offsetsp * pow(2,offsetscale);
-  printf("\n=====!!!!======-HERE,  pix %f and offsetscale is %.9f and offsetavarage (Pix_os_r1) is %d and %d===========\n", pix, offsetscale, offsetavarage, offsetsp);
+  printf("\n=====!!!!======-HERE,  subpage is: %d pix %f and offsetscale is %.9f and offsetavarage (Pix_os_r1) is %d and %d===========\n", subp, pix, offsetscale, offsetavarage, offsetsp);
   return pix;
 }
 
 double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
 {
-  FILE *fp;
-  fp = fopen ("/home/pi/programming/QT/Diploma/sensitivity.txt","a");
+  // FILE *fp;
+  // fp = fopen ("/home/pi/programming/QT/Diploma/sensitivity.txt","a");
   int aref;
   double a;
   //int a2;
@@ -491,8 +491,8 @@ double restore_sensitivity(uint16_t p, uint16_t EEprom[], int iteration)
   a = (aref&0x07FF)/pow(2,ascale);
   a = apix*a/(pow(2,11)-1);
   //a2 = apix*aref/(pow(2,11)-1);
-  fprintf(fp, "\n=====!!!!======-HERE,  a (sensitivity) is %.9f and p (row) is %d and apix is %d and ascale (scale_row) is %f and aref (row_max) is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
-  fclose(fp);
+  printf("\n=====!!!!======-HERE,  a (sensitivity) is %.9f and p (row) is %d and apix is %d and ascale (scale_row) is %f and aref (row_max) is %.9f===========\n", a, p, apix, ascale, (aref&0x07FF)/pow(2,ascale));
+  // fclose(fp);
   return a;
 }
 
